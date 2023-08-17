@@ -35,6 +35,27 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.classList.remove("hidden");
     }
 
+    function displayLeaderboard() {
+        const leaderboardModal = document.getElementById("leaderboard-modal");
+        const leaderboardList = document.getElementById("leaderboard-list");
+
+        // Fetch scores from localStorage
+        const scoreBoard = JSON.parse(localStorage.getItem("scoreBoard")) || [];
+        
+        // Clear previous leaderboard entries
+        leaderboardList.innerHTML = '';
+
+        // Populate leaderboard
+        scoreBoard.forEach((entry, index) => {
+            const li = document.createElement("li");
+            li.textContent = `${index + 1}. ${entry.initials}: ${entry.score}`;
+            leaderboardList.appendChild(li);
+        });
+
+        // Show leaderboard modal
+        leaderboardModal.classList.remove("hidden");
+    }
+
     function submitAnswer() {
         const selectedOption = document.querySelector(`input[name="q${currentQuestion + 1}"]:checked`);
 
@@ -61,19 +82,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function submitQuiz() {
-        showModal(`Quiz submitted! Your score is ${score}.`);
-
-        const initials = prompt("Please enter your initials:");
-        if (initials) {
-            const scoreBoard = JSON.parse(localStorage.getItem("scoreBoard")) || [];
-            scoreBoard.push({
-                initials,
-                score
-            });
-
-            scoreBoard.sort((a, b) => b.score - a.score);
-            localStorage.setItem("scoreBoard", JSON.stringify(scoreBoard));
-        }
+        questions[currentQuestion].classList.add("hidden"); // Hide the last question
+        showModal(`Quiz completed! Your score is ${score}.`);
+        displayLeaderboard();
     }
 
     startBtn.addEventListener("click", () => {
@@ -94,9 +105,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("try-again-btn").addEventListener("click", () => {
         location.reload();
-    });
-
-    document.querySelector(".close-btn").addEventListener("click", () => {
-        document.getElementById("modal").classList.add("hidden");
     });
 });
