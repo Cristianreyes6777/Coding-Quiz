@@ -83,9 +83,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function submitQuiz() {
         questions[currentQuestion].classList.add("hidden"); // Hide the last question
+        submitBtn.classList.add("hidden"); // Hide the submit button
+    
+        const initials = prompt("Please enter your initials:");
+        if (initials) {
+            const scoreBoard = JSON.parse(localStorage.getItem("scoreBoard")) || [];
+            scoreBoard.push({
+                initials,
+                score
+            });
+    
+            scoreBoard.sort((a, b) => b.score - a.score);
+            localStorage.setItem("scoreBoard", JSON.stringify(scoreBoard));
+        }
+    
         showModal(`Quiz completed! Your score is ${score}.`);
         displayLeaderboard();
     }
+    
 
     startBtn.addEventListener("click", () => {
         startBtn.classList.add("hidden");
